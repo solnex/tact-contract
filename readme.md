@@ -37,3 +37,39 @@ message(0x178d4519) TokenTransferInternal {
     forward_payload: Slice as remaining; // Comment Text message when Transfer the jetton
 }
 ```
+
+### SignatureVerifier合约
+
+数字签名验证合约，可用于空投合约的数据验证。
+空投合约主要流程
+
+1. 用户在前端发起提取，前端发起http请求到后端，传出
+   参数为用户的地址以及数量
+2. 后端服务器用私钥签名，并将签名传给前端，
+3. 用户发起交易，将提取数据以及签名传给
+   合约
+4. 合约用公钥解密，验证通过后，将代币发送给接收方
+
+#### 服务端签名
+
+```
+import { sign } from 'ton-crypto';
+const signature = sign(signatureData.hash(), keyPair.secretKey);
+
+```
+
+#### 合约端验证签名
+
+```
+fun checkSignature(hash: Int, signature: Slice, public_key: Int): Bool;
+```
+
+#### 其他
+
+```
+ //将buffer转化为bigint类型
+ let publicKeyBigInt = BigInt(`0x${keyPair.publicKey.toString('hex')}`);
+
+ //将buffer转化为cell类型
+ let signatureCell = beginCell().storeBuffer(signature).endCell();
+```
