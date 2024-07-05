@@ -26,3 +26,17 @@ Slice是可变的，读取数据时会更新其内部状态，指向新的数据
 
 Cell适用于数据的组织和存储，尤其是需要构建复杂数据结构的时候。
 Slice适用于从Cell中读取数据，例如在智能合约中解析传入的数据。
+
+## deploy
+
+最简单的特征，通过为DeployDeployable消息实现一个简单的接收器，为部署提供方便的统一机制。
+所有合约都通过发送消息来部署。**虽然任何消息都可用于此目的，但最佳做法是使用特殊的部署消息。**
+此消息只有一个字段，queryId由部署者提供（通常设置为零）。如果部署成功，合约将回复一条DeployOkqueryId消息，并在响应中回显该消息。
+
+```
+trait Deployable {
+    receive(deploy: Deploy) {
+        self.notify(DeployOk{queryId: deploy.queryId}.toCell());
+    }
+}
+```

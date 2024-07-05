@@ -73,3 +73,10 @@ fun checkSignature(hash: Int, signature: Slice, public_key: Int): Bool;
  //将buffer转化为cell类型
  let signatureCell = beginCell().storeBuffer(signature).endCell();
 ```
+
+### StarFaucet水龙头合约
+
+jetton的发送是通过调用jettonWallet的transfer方法实现的，所以应该将合约的jettonWallet地址
+告知写入合约。注意的是，本合约的地址是在部署前就可以通过初始化参数生成的，而jettonWallet地址只能在
+知道合约地址的情况下生成，所以不能作为初始化参数，只能通过部署交易配置给合约。而部署交易是合约的第一个
+交易，其目的是激活合约，所有合约都通过发送其他消息来部署。
