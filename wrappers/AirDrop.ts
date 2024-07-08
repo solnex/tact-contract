@@ -1,0 +1,1 @@
+export * from '../build/AirDrop/tact_AirDrop';
