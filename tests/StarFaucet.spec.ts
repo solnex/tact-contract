@@ -64,49 +64,42 @@ describe('SignatureVerifier', () => {
     it('should deploy success', async () => {});
     it('should claim success', async () => {
         //mint to Faucet contract
+        const mintAmount = 1000000000n;
         await star.send(
             deployer.getSender(),
             {
-                value: toNano('0.02'),
+                value: toNano('0.1'),
             },
             {
                 $$type: 'Mint',
                 receiver: starFaucet.address,
-                amount: 1000000000n,
+                amount: mintAmount,
             },
         );
-        //claim the star token
+        const starFaucetJettonDefaultWallet = blockchain.openContract(
+            await JettonDefaultWallet.fromInit(star.address, starFaucet.address),
+        );
+        const starFaucetWalletData = await starFaucetJettonDefaultWallet.getGetWalletData();
+        expect(starFaucetWalletData.balance).toBe(mintAmount);
+
+        // claim the star token
         await starFaucet.send(
             userTom.getSender(),
-            {
-                value: toNano('0.05'),
+                                                                                                       {
+                value: toNano('0.2'),
             },
             {
                 $$type: 'Claim',
             },
         );
         //check the token balance
-        const limitAmount = 1000000n;
+         const claimAmount = 1000000n;
         userTomJettonDefaultWallet = blockchain.openContract(
             await JettonDefaultWallet.fromInit(star.address, userTom.address),
         );
-        // const userTomWalletData = await userTomJettonDefaultWallet.getGetWalletData();
-        // expect(userTomWalletData.balance).toBe(limitAmount);
-        await userTomJettonDefaultWallet.send(
-            userTom.getSender(),
-            {
-                value: toNano('0.01'),
-            },
-            {
-                $$type: 'TokenBurn',
-                queryId: 0n,
-                amount: limitAmount,
-                owner: userTom.address,
-                response_destination: userTom.address,
-            },
-        );
-
         const userTomWalletData = await userTomJettonDefaultWallet.getGetWalletData();
-        expect(userTomWalletData.balance).toBe(0n);
+   
+        expect(userTomWalletData.balance).toBe(claimAmount);
+     
     });
 });
