@@ -91,3 +91,17 @@ jetton的发送是通过调用jettonWallet的transfer方法实现的，所以应
 3. 用户发起交易，将提取数据以及签名传给
    合约
 4. 合约用公钥解密，验证通过后，将jetton代币发送给接收方
+
+### Card合约
+Card合约实现了nft的标准，借用了Howard Peng老师的实现
+#### transfer方法
+``` 
+message(0x5fcc3d14) Transfer {
+    query_id: Int as uint64;
+    new_owner: Address;       //转移地址
+    response_destination: Address?;
+    custom_payload: Cell?;
+    forward_amount: Int as coins;
+    forward_payload: Slice as remaining;
+}
+```
